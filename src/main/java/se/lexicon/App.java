@@ -19,7 +19,7 @@ public static void main( String[] args ) {
           PreparedStatement preparedStatement = connection.prepareStatement(query);
           ){
 
-          preparedStatement.setInt(1,1 );
+          preparedStatement.setInt(1,99 );
           try(ResultSet resultSet = preparedStatement.executeQuery()){
 
             while (resultSet.next()){
