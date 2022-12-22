@@ -2,6 +2,7 @@ package se.lexicon;
 
 import se.lexicon.dao.CityDaoJDBC;
 import se.lexicon.exception.DBConnectionException;
+import se.lexicon.model.City;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +23,8 @@ public class App {
         //cityDaoJDBC.findByCode("ROM");
         //cityDaoJDBC.findByName("Ro%");
         //cityDaoJDBC.findAll();
+        cityDaoJDBC.add(new City("Växjö", "SWE", "Kronobergs län", 72200));
+
 
 
 

@@ -4,10 +4,7 @@ import se.lexicon.MySQLConnection;
 import se.lexicon.exception.DBConnectionException;
 import se.lexicon.model.City;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,7 +182,33 @@ public class CityDaoJDBC implements CityDao{
 
     @Override
     public City add(City city) {
+        System.out.println("Add city: "+city.getName() +" to the table");
+        System.out.println("******************************");
 
+        query = "INSERT INTO CITY (Name, CountryCode, District, Population) VALUES (?,?,?,?)";
+
+        try (
+                Connection connection = MySQLConnection.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            preparedStatement.setString(1, city.getName());
+            preparedStatement.setString(2, city.getCountryCode());
+            preparedStatement.setString(3, city.getDistrict());
+            preparedStatement.setInt(4, city.getPopulation());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected);
+
+            try(
+                    ResultSet resultSet = preparedStatement.getGeneratedKeys();) {
+                if (resultSet.next()) { // if the row exists
+                    System.out.println("New added City ID is:" + resultSet.getInt(1));
+                }
+            }
+        }catch (DBConnectionException|SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -196,6 +219,7 @@ public class CityDaoJDBC implements CityDao{
 
     @Override
     public int delete(City city) {
+
         return 0;
     }
 }
