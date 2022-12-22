@@ -24,8 +24,8 @@ public class CityDaoJDBC implements CityDao{
     @Override
     public  City findByID(int id) {
 
-        System.out.println("Find City By ID: "+id);
-        System.out.println("******************************");
+        System.out.println("First: Find City By ID: "+id);
+
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a positive number!");
         }
@@ -41,12 +41,13 @@ public class CityDaoJDBC implements CityDao{
 
                     while (resultSet.next()) {
 
+                        /*
                         System.out.println("Id\t\t\t:" + resultSet.getInt("ID"));
                         System.out.println("Name \t\t:" + resultSet.getString("Name"));
                         System.out.println("CountryCode :" + resultSet.getString("CountryCode"));
                         System.out.println("District \t:" + resultSet.getString("District"));
                         System.out.println("Population  :" + resultSet.getInt("Population"));
-
+                        */
                             foundCity = new City(
                                     resultSet.getInt("ID"),
                                     resultSet.getString("Name"),
@@ -61,13 +62,14 @@ public class CityDaoJDBC implements CityDao{
                 e.printStackTrace();
 
             }
+        if (foundCity!=null) System.out.println("-------------------------------");
             return foundCity;
 
         }
     @Override
     public List<City> findByCode(String code) {
         System.out.println("Find Cities By CountryCode: "+code);
-        System.out.println("******************************");
+        System.out.println("-------------------------------");
 
         query = "SELECT * FROM CITY WHERE CountryCode = ?";
         cityStorage = new ArrayList<>();
@@ -100,15 +102,15 @@ public class CityDaoJDBC implements CityDao{
         }
 
         System.out.println("There are " + cityStorage.size() +" cities in the table, with CountryCode " + code);
-        cityStorage.forEach(System.out::println);
+        //cityStorage.forEach(System.out::println);
 
-        System.out.println("-------------------------------");
-        return null;
+        if (cityStorage.size()!=0) System.out.println("-------------------------------");
+        return cityStorage;
     }
 
     @Override
     public List<City> findByName(String name) {
-        System.out.println("Find Cities By Name: "+name);
+        System.out.println("Task: Find Cities By Name: "+name);
         System.out.println("******************************");
 
         query = "SELECT * FROM CITY WHERE Name like ?";
@@ -141,15 +143,15 @@ public class CityDaoJDBC implements CityDao{
         }
 
         System.out.println("There are " + cityStorage.size() +" cities in the table, with Name: " + name);
-        cityStorage.forEach(System.out::println);
-        System.out.println("-------------------------------");
-        return null;
+        //cityStorage.forEach(System.out::println);
+        if (cityStorage!=null) System.out.println("-------------------------------");
+        return cityStorage;
     }
 
     @Override
     public List<City> findAll() {
         System.out.println("Find all cities: ");
-        System.out.println("******************************");
+        System.out.println("-------------------------------");
 
         query = "SELECT * FROM CITY";
         cityStorage = new ArrayList<>();
@@ -180,16 +182,16 @@ public class CityDaoJDBC implements CityDao{
         }
 
         System.out.println("There are " + cityStorage.size() +" cities in the table:");
-        cityStorage.forEach(System.out::println);
+        //cityStorage.forEach(System.out::println);
         System.out.println("-------------------------------");
 
-        return null;
+        return cityStorage;
     }
 
     @Override
     public City add(City city) {
         System.out.println("Add city: "+city.getName() +" to the table");
-        System.out.println("******************************");
+        System.out.println("-------------------------------");
 
 
         query = "INSERT INTO CITY (Name, CountryCode, District, Population) VALUES (?,?,?,?)";
@@ -204,12 +206,14 @@ public class CityDaoJDBC implements CityDao{
             preparedStatement.setInt(4, city.getPopulation());
 
             int rowsAffected = preparedStatement.executeUpdate();
-            System.out.println(rowsAffected);
+            System.out.println(rowsAffected+" city was added to the DB");
+
 
             try(
                     ResultSet resultSet = preparedStatement.getGeneratedKeys();) {
                 if (resultSet.next()) { // if the row exists
                     System.out.println("New added City ID is:" + resultSet.getInt(1));
+
                 }
             }
         }catch (DBConnectionException|SQLException e) {
@@ -221,12 +225,66 @@ public class CityDaoJDBC implements CityDao{
 
     @Override
     public City update(City city) {
+        System.out.println("Task: Update city with ID: "+city.getId() +" in the table");
+        City cityToUpdateById = findByID(city.getId());
+
+        if (cityToUpdateById!=null){
+            query = "UPDATE CITY SET NAME = ?, CountryCode= ?, District = ?, Population =? WHERE ID = ?";
+
+        try (
+             Connection connection = MySQLConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+            ) {
+
+            preparedStatement.setString(1, city.getName());
+            preparedStatement.setString(2, city.getCountryCode());
+            preparedStatement.setString(3, city.getDistrict());
+            preparedStatement.setInt(4, city.getPopulation());
+            preparedStatement.setInt(5, city.getId());
+
+            long rowsAffected = preparedStatement.executeLargeUpdate();
+            System.out.println(rowsAffected+" city was updated in the DB");
+            try(
+                    ResultSet resultSet = preparedStatement.getGeneratedKeys();) {
+                if (resultSet.next()) { // if the row exists
+                    System.out.println("Updated City ID is:" + resultSet.getInt(1));
+
+                }
+            }
+        }catch (DBConnectionException|SQLException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        }
         return null;
     }
 
     @Override
     public int delete(City city) {
+        System.out.println("Task: Delete city with ID: "+city.getId() +" from the table");
 
+        City cityToDeleteById = findByID(city.getId());
+
+        if (cityToDeleteById!=null){
+            query = "DELETE FROM CITY WHERE ID = ?";
+
+            try (
+                    Connection connection = MySQLConnection.getConnection();
+                    PreparedStatement preparedStatement = connection.prepareStatement(query)
+            ) {
+
+                preparedStatement.setInt(1, city.getId());
+
+                int rowAffected = preparedStatement.executeUpdate();
+                System.out.println(rowAffected+" city was deleted from the DB");
+
+            } catch(DBConnectionException | SQLException e){
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+
+            }
+            }else System.out.println("City with ID "+city.getId()+" was not found in the DB");
         return 0;
     }
 }

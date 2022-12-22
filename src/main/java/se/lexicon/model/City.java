@@ -30,6 +30,9 @@ public class City {
         Population = population;
     }
 
+    public City(int id) {
+        this.id = id;
+    }
     //getters and setters
 
     public int getId() {
