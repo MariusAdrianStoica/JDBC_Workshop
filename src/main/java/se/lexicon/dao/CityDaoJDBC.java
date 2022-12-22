@@ -11,6 +11,7 @@ import java.util.List;
 public class CityDaoJDBC implements CityDao{
 
     private List<City> cityStorage;
+    private City foundCity;
 
     private static String query;
 
@@ -45,7 +46,13 @@ public class CityDaoJDBC implements CityDao{
                         System.out.println("CountryCode :" + resultSet.getString("CountryCode"));
                         System.out.println("District \t:" + resultSet.getString("District"));
                         System.out.println("Population  :" + resultSet.getInt("Population"));
-                        System.out.println("-------------------------------");
+
+                            foundCity = new City(
+                                    resultSet.getInt("ID"),
+                                    resultSet.getString("Name"),
+                                    resultSet.getString("CountryCode"),
+                                    resultSet.getString("District"),
+                                    resultSet.getInt("Population"));
                     }
                 }
 
@@ -54,8 +61,7 @@ public class CityDaoJDBC implements CityDao{
                 e.printStackTrace();
 
             }
-
-            return null;
+            return foundCity;
 
         }
     @Override
@@ -184,6 +190,7 @@ public class CityDaoJDBC implements CityDao{
     public City add(City city) {
         System.out.println("Add city: "+city.getName() +" to the table");
         System.out.println("******************************");
+
 
         query = "INSERT INTO CITY (Name, CountryCode, District, Population) VALUES (?,?,?,?)";
 

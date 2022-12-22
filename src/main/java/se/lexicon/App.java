@@ -17,13 +17,26 @@ public class App {
     System.out.println("JDBC Workshop");
     System.out.println("-------------------------------");
 
-        CityDaoJDBC cityDaoJDBC = new CityDaoJDBC();
+      CityDaoJDBC cityDaoJDBC = new CityDaoJDBC();
 
-        //cityDaoJDBC.findByID(34);
+      try{
+          System.out.println(cityDaoJDBC.findByID(4081).toString()+"\n");
+      }catch (NullPointerException e){
+          System.out.println(e.getMessage());
+      }
+
         //cityDaoJDBC.findByCode("ROM");
+
         //cityDaoJDBC.findByName("Ro%");
+
         //cityDaoJDBC.findAll();
-        cityDaoJDBC.add(new City("Växjö", "SWE", "Kronobergs län", 72200));
+
+        //cityDaoJDBC.add(new City("Växjö", "SWE", "Kronobergs län", 72200));
+
+        //cityDaoJDBC.update(new City("WEXIO", "SWE", "Kronobergs län", 72200);
+
+        //cityDaoJDBC.delete(new City("Växjö", "SWE", "Kronobergs län", 72200);
+
 
 
 

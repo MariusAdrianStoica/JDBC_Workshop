@@ -1,5 +1,7 @@
 package se.lexicon.model;
 
+import java.util.Objects;
+
 public class City {
 
     //fields
@@ -65,6 +67,22 @@ public class City {
     public void setPopulation(int population) {
         Population = population;
     }
+
+    //equals & hashcode
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return id == city.id && Population == city.Population && Objects.equals(Name, city.Name) && Objects.equals(CountryCode, city.CountryCode) && Objects.equals(District, city.District);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, Name, CountryCode, District, Population);
+    }
+
 
     //toString()
 
