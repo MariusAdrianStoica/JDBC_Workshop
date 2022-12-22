@@ -21,7 +21,7 @@ public class App {
         //cityDaoJDBC.findByID(34);
         //cityDaoJDBC.findByCode("ROM");
         //cityDaoJDBC.findByName("Ro%");
-        cityDaoJDBC.findAll();
+        //cityDaoJDBC.findAll();
 
 
 
